@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  llamacpp:
+    image: ghcr.io/comput3ai/c3-llamacpp-hf-dl
+    build: .
+    environment:
+      - API_NAME=${API_NAME}
+      - MODEL_REPO=${MODEL_REPO}
+      - MODEL_PATTERN=${MODEL_PATTERN}
+      - MODEL_FILE=${MODEL_FILE}
+      - HF_TOKEN=${HF_TOKEN:-}
+      - HF_HUB_ENABLE_HF_TRANSFER=${HF_HUB_ENABLE_HF_TRANSFER:-1}
+      - PORT=${PORT:-8080}
+      - CTX_SIZE=${CTX_SIZE:-16384}
+      - GPU_LAYERS=${GPU_LAYERS:-99}
+      - PARALLEL=${PARALLEL:-4}
+      - CONT_BATCHING=${CONT_BATCHING:-false}
+      - CHAT_TEMPLATE_URL=${CHAT_TEMPLATE_URL:-}
+    ports:
+      - "${PORT:-8080}:${PORT:-8080}"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    restart: unless-stopped

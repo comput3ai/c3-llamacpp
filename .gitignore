@@ -1,0 +1,24 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+
+# Environment
+.env
+
+# Models
+models/
+hf_cache/
+
+# Traefik
+letsencrypt/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+*.swp

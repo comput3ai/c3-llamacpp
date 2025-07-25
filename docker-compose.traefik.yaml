@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  traefik:
+    image: traefik:v2.11
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.email=${TRAEFIK_EMAIL}"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+      # Redirect HTTP to HTTPS
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"  # Traefik dashboard
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./letsencrypt:/letsencrypt"
+    networks:
+      - llamacpp-network
+
+  llamacpp:
+    image: ghcr.io/comput3ai/c3-llamacpp-hf-dl
+    build: .
+    environment:
+      - API_NAME=${API_NAME}
+      - MODEL_REPO=${MODEL_REPO}
+      - MODEL_PATTERN=${MODEL_PATTERN}
+      - MODEL_FILE=${MODEL_FILE}
+      - HF_TOKEN=${HF_TOKEN:-}
+      - HF_HUB_ENABLE_HF_TRANSFER=${HF_HUB_ENABLE_HF_TRANSFER:-1}
+      - PORT=8080
+      - CTX_SIZE=${CTX_SIZE:-16384}
+      - GPU_LAYERS=${GPU_LAYERS:-99}
+      - PARALLEL=${PARALLEL:-4}
+      - CONT_BATCHING=${CONT_BATCHING:-false}
+      - CHAT_TEMPLATE_URL=${CHAT_TEMPLATE_URL:-}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.llamacpp.rule=Host(`${TRAEFIK_HOSTNAME}`)"
+      - "traefik.http.routers.llamacpp.entrypoints=websecure"
+      - "traefik.http.routers.llamacpp.tls.certresolver=myresolver"
+      - "traefik.http.services.llamacpp.loadbalancer.server.port=8080"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    networks:
+      - llamacpp-network
+    restart: unless-stopped
+
+networks:
+  llamacpp-network:
+    driver: bridge
