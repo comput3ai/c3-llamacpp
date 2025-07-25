@@ -70,6 +70,40 @@ docker run --gpus all \
 
 ### Using the API
 
+#### With curl
+
+```bash
+# Chat completion
+curl -X POST http://localhost:8080/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "deepseek-r1",
+    "messages": [
+      {"role": "user", "content": "Hello! How are you?"}
+    ],
+    "temperature": 0.7
+  }'
+
+# Streaming response
+curl -X POST http://localhost:8080/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "deepseek-r1",
+    "messages": [
+      {"role": "user", "content": "Write a haiku about coding"}
+    ],
+    "stream": true
+  }'
+
+# Check model info
+curl http://localhost:8080/v1/models
+
+# Health check
+curl http://localhost:8080/health
+```
+
+#### With Python
+
 ```python
 from openai import OpenAI
 
