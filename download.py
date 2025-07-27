@@ -39,6 +39,9 @@ def main():
     api_name = args.api_name or os.getenv('API_NAME')
     model_file = os.getenv('MODEL_FILE')  # Main model file to check existence
     hf_token = os.getenv('HF_TOKEN')  # Will be auto-used by huggingface_hub
+    # Treat empty string as None to avoid 401 errors for public repos
+    if hf_token == '':
+        hf_token = None
 
     # Enable fast transfer if set
     if os.getenv('HF_HUB_ENABLE_HF_TRANSFER') == '1':
