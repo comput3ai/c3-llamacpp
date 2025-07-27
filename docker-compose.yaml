@@ -25,6 +25,8 @@ services:
       - FLASH_ATTN=${FLASH_ATTN:-}
       - MLOCK=${MLOCK:-}
       - OVERRIDE_TENSOR=${OVERRIDE_TENSOR:-}
+    volumes:
+      - models:/models
     ports:
       - "${PORT:-8080}:${PORT:-8080}"
     deploy:
@@ -35,3 +37,6 @@ services:
               count: all
               capabilities: [gpu]
     restart: unless-stopped
+
+volumes:
+  models:

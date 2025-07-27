@@ -48,6 +48,8 @@ services:
       - FLASH_ATTN=${FLASH_ATTN:-}
       - MLOCK=${MLOCK:-}
       - OVERRIDE_TENSOR=${OVERRIDE_TENSOR:-}
+    volumes:
+      - models:/models
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.llamacpp.rule=Host(`${TRAEFIK_HOSTNAME}`)"
@@ -68,3 +70,6 @@ services:
 networks:
   llamacpp-network:
     driver: bridge
+
+volumes:
+  models:
