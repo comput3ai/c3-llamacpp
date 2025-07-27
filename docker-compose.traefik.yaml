@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   traefik:
+    container_name: traefik
     image: traefik:v2.11
     command:
       - "--providers.docker=true"
@@ -24,6 +25,7 @@ services:
       - llamacpp-network
 
   llamacpp:
+    container_name: llamacpp
     image: ghcr.io/comput3ai/c3-llamacpp
     build: .
     environment:

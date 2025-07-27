@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   llamacpp:
+    container_name: llamacpp
     image: ghcr.io/comput3ai/c3-llamacpp
     build: .
     environment:
