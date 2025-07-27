@@ -26,7 +26,7 @@ docker run --gpus all \
   -e MODEL_PATTERN="*Q4_0.gguf" \
   -e MODEL_FILE=DeepSeek-R1-0528-Qwen3-8B-Q4_0.gguf \
   -p 8080:8080 \
-  ghcr.io/comput3ai/c3-llamacpp-hf-dl
+  ghcr.io/comput3ai/c3-llamacpp
 ```
 
 ## 🔧 Configuration
@@ -65,7 +65,7 @@ docker run --gpus all \
   -e CTX_SIZE=16384 \
   -e CHAT_TEMPLATE_URL=https://huggingface.co/unsloth/Kimi-K2-Instruct/raw/main/chat_template.jinja \
   -p 8080:8080 \
-  ghcr.io/comput3ai/c3-llamacpp-hf-dl
+  ghcr.io/comput3ai/c3-llamacpp
 ```
 
 ### Using the API
@@ -132,7 +132,7 @@ docker run -t --gpus all \
   -e MODEL_PATTERN="*Q4_0.gguf" \
   -e MODEL_FILE=DeepSeek-R1-0528-Qwen3-8B-Q4_0.gguf \
   -p 8080:8080 \
-  ghcr.io/comput3ai/c3-llamacpp-hf-dl
+  ghcr.io/comput3ai/c3-llamacpp
 ```
 
 ### Option 2: Docker Compose (Recommended)
@@ -187,9 +187,9 @@ Your service will be available at `https://llama.example.com` with automatic SSL
 ## 🔨 Building Locally
 
 ```bash
-git clone https://github.com/yourusername/c3-llamacpp-hf-dl
-cd c3-llamacpp-hf-dl
-docker build -t c3-llamacpp-hf-dl .
+git clone https://github.com/yourusername/c3-llamacpp
+cd c3-llamacpp
+docker build -t c3-llamacpp .
 ```
 
 ## 🛠️ How It Works
