@@ -52,21 +52,65 @@ docker run --gpus all \
 | `HF_TOKEN` | HuggingFace token for private repos | - |
 | `CHAT_TEMPLATE_URL` | URL to download chat template | - |
 
+### Performance Optimization Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `BATCH_SIZE` | Logical maximum batch size | `2048` |
+| `UBATCH_SIZE` | Physical maximum batch size | `512` |
+| `CACHE_TYPE_K` | KV cache data type for K (f16, q4_0, etc.) | - |
+| `CACHE_TYPE_V` | KV cache data type for V (f16, q4_0, etc.) | - |
+| `FLASH_ATTN` | Enable Flash Attention | - |
+| `MLOCK` | Lock model in RAM | - |
+| `OVERRIDE_TENSOR` | Override tensor buffer types | - |
+
+#### Optimization Tips
+
+For **Kimi K2** and other large MoE models:
+- Set `CACHE_TYPE_K=q4_0` to compress KV cache (recommended by Unsloth)
+- Set `OVERRIDE_TENSOR=.ffn_.*_exps.=CPU` to offload MoE layers to CPU
+- This allows fitting larger models with limited VRAM
+
 ## 📚 Examples
 
 ### Running Kimi K2
+
+#### On Datacenter GPUs (H200, H100, A100 80GB)
 
 ```bash
 docker run --gpus all \
   -e API_NAME=kimi-k2 \
   -e MODEL_REPO=unsloth/Kimi-K2-Instruct-GGUF \
-  -e MODEL_PATTERN="*Q8_0*" \
-  -e MODEL_FILE=Kimi-K2-Instruct-Q8_0-00001-of-00023.gguf \
-  -e CTX_SIZE=16384 \
+  -e MODEL_PATTERN="Q8_0/*" \
+  -e MODEL_FILE=Q8_0/Kimi-K2-Instruct-Q8_0-00001-of-00023.gguf \
+  -e CTX_SIZE=32768 \
   -e CHAT_TEMPLATE_URL=https://huggingface.co/unsloth/Kimi-K2-Instruct/raw/main/chat_template.jinja \
+  -e FLASH_ATTN=true \
+  -e MLOCK=true \
+  -e PARALLEL=8 \
+  -e BATCH_SIZE=4096 \
   -p 8080:8080 \
   ghcr.io/comput3ai/c3-llamacpp
 ```
+
+#### On Consumer GPUs (RTX 3090/4090 24GB)
+
+```bash
+docker run --gpus all \
+  -e API_NAME=kimi-k2 \
+  -e MODEL_REPO=unsloth/Kimi-K2-Instruct-GGUF \
+  -e MODEL_PATTERN="UD-TQ1_0/*" \
+  -e MODEL_FILE=UD-TQ1_0/Kimi-K2-Instruct-UD-TQ1_0-00001-of-00005.gguf \
+  -e CTX_SIZE=16384 \
+  -e CHAT_TEMPLATE_URL=https://huggingface.co/unsloth/Kimi-K2-Instruct/raw/main/chat_template.jinja \
+  -e CACHE_TYPE_K=q4_0 \
+  -e OVERRIDE_TENSOR=".ffn_.*_exps.=CPU" \
+  -e FLASH_ATTN=true \
+  -p 8080:8080 \
+  ghcr.io/comput3ai/c3-llamacpp
+```
+
+Note: The consumer GPU example uses the 1.8-bit quantized version (245GB) instead of Q8_0 (1TB+) and offloads MoE layers to CPU.
 
 ### Using the API
 

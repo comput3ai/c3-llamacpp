@@ -41,6 +41,13 @@ services:
       - PARALLEL=${PARALLEL:-4}
       - CONT_BATCHING=${CONT_BATCHING:-false}
       - CHAT_TEMPLATE_URL=${CHAT_TEMPLATE_URL:-}
+      - BATCH_SIZE=${BATCH_SIZE:-2048}
+      - UBATCH_SIZE=${UBATCH_SIZE:-512}
+      - CACHE_TYPE_K=${CACHE_TYPE_K:-}
+      - CACHE_TYPE_V=${CACHE_TYPE_V:-}
+      - FLASH_ATTN=${FLASH_ATTN:-}
+      - MLOCK=${MLOCK:-}
+      - OVERRIDE_TENSOR=${OVERRIDE_TENSOR:-}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.llamacpp.rule=Host(`${TRAEFIK_HOSTNAME}`)"
