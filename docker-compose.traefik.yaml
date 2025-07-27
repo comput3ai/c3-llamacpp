@@ -26,7 +26,7 @@ services:
       - llamacpp-network
 
   llamacpp:
-    image: ghcr.io/comput3ai/c3-llamacpp-hf-dl
+    image: ghcr.io/comput3ai/c3-llamacpp
     build: .
     environment:
       - API_NAME=${API_NAME}
