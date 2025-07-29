@@ -59,6 +59,13 @@ if [ -n "$CHAT_TEMPLATE_URL" ]; then
     LLAMA_ARGS+=("--chat-template-file" "/models/${API_NAME}/chat_template.jinja")
 fi
 
+# Handle API key - unset if empty
+if [ -z "${LLAMA_API_KEY:-}" ]; then
+    unset LLAMA_API_KEY
+else
+    LLAMA_ARGS+=("--api-key" "$LLAMA_API_KEY")
+fi
+
 # Add any additional arguments passed to the container
 LLAMA_ARGS+=("$@")
 

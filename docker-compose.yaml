@@ -25,6 +25,8 @@ services:
       - FLASH_ATTN=${FLASH_ATTN:-}
       - MLOCK=${MLOCK:-}
       - OVERRIDE_TENSOR=${OVERRIDE_TENSOR:-}
+      - WEBUI=${WEBUI:-false}
+      - LLAMA_API_KEY=${LLAMA_API_KEY:-}
     volumes:
       - models:/models
     ports:
