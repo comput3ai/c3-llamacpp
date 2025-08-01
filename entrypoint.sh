@@ -27,6 +27,26 @@ if [ "$CONT_BATCHING" = "true" ]; then
     LLAMA_ARGS+=("--cont-batching")
 fi
 
+# Add tensor split configuration if specified
+if [ -n "$TENSOR_SPLIT" ]; then
+    LLAMA_ARGS+=("--tensor-split" "${TENSOR_SPLIT}")
+fi
+
+# Add split mode if specified
+if [ -n "$SPLIT_MODE" ]; then
+    LLAMA_ARGS+=("--split-mode" "${SPLIT_MODE}")
+fi
+
+# Add main GPU selection if specified
+if [ -n "$MAIN_GPU" ]; then
+    LLAMA_ARGS+=("--main-gpu" "${MAIN_GPU}")
+fi
+
+# Add NUMA configuration if specified
+if [ -n "$NUMA" ]; then
+    LLAMA_ARGS+=("--numa" "${NUMA}")
+fi
+
 # Add KV cache type for K if specified
 if [ -n "$CACHE_TYPE_K" ]; then
     LLAMA_ARGS+=("--cache-type-k" "${CACHE_TYPE_K}")
@@ -56,6 +76,8 @@ fi
 if [ -n "$CHAT_TEMPLATE_URL" ]; then
     echo "Downloading chat template..."
     curl -sSL "$CHAT_TEMPLATE_URL" -o "/models/${API_NAME}/chat_template.jinja"
+    # Enable jinja processing for custom templates
+    LLAMA_ARGS+=("--jinja")
     LLAMA_ARGS+=("--chat-template-file" "/models/${API_NAME}/chat_template.jinja")
 fi
 
